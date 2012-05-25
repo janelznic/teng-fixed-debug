@@ -1,0 +1,210 @@
+<!---
+		SUPER TENG DEBUG
+		* Version 1.2.2
+		* FireTeng compatible format
+		* Not depend on JAK
+		* CML: http://cml.kancelar.seznam.cz/generic/wiki/Handbook/Webmasters/TengDebug
+		* Maintainer: <jan.elznic@firma.seznam.cz>
+--->
+<?teng if #developeMode == 1?>
+	<style type="text/css">
+		#teng-debug { font-family:courier; font-size:12px; }
+		#teng-debug ul { list-style-type:none; }
+		#teng-debug pre { text-align:left; }
+		#teng-debug pre#debugOutput { color:blue; }
+		#teng-debug pre#teng-debug-errors { color:red; }
+		#teng-debug pre#teng-debug-content { color:green; }
+
+		<?teng if #SUPER_TENG_DESIGN == 1?>
+			#teng-debug { color:#FFF; margin:20px; padding:3px; max-width:1000px; background:#000; border:1px dotted black; }
+			#teng-debug h2 { float:left; margin-bottom:3px; margin-top:-3px; }
+			#teng-debug pre { margin:0; font-size:12px; overflow:auto; color:#FFF !important; }
+			#teng-debug pre.debugOutput { background:#141414; }
+			#teng-debug pre#teng-debug-errors { background:#640000; }
+			#teng-debug pre#teng-debug-content { background:#003C00; }
+			#teng-debug .teng-debug-control-panel li { float:right; color:#FFF; margin-right:17px; }
+			#teng-debug .teng-debug-control-panel li a { color:#FFF; }
+			#teng-debug .teng-debug-control-panel li a:hover { color:#E6E6E6; }
+
+			<?teng if #TENG_FIXED_DEBUG == 1?>
+				#teng-debug { margin:0; max-width:100%; width:100%; position:fixed; bottom:0; z-index:1000; }
+				#teng-debug #teng-wrap { overflow:auto; width:99%; resize:both; height:#{TENG_FIXED_DEBUG_HEIGHT}px; }
+				#teng-debug #teng-debug-resizer { position:absolute; top:0px; width:95%; -moz-user-select:none; -webkit-user-select:none; height:20px; cursor:n-resize; }
+				body { padding-bottom:40px; }
+			<?teng endif?>
+		<?teng endif?>
+	</style>
+
+	<script type="text/javascript">
+		/* Pročistí Teng debug od balastu */
+		TengDebugCleaner = function(tengId) {
+			this.tengDebug = (document.getElementById(tengId));
+			this.clean(this.tengDebug.innerHTML);
+			this.num = Math.random();
+		};
+
+		TengDebugCleaner.prototype.clean = function(str) {
+			for (var i=0; str.indexOf("    \n") > -1; i++) {
+				str = str.replace("    \n", this.num);
+				str = str.replace(("   " + this.num), "");
+			}
+
+			for (var i=0; str.indexOf(this.num) > -1; i++) {
+				str = str.replace(this.num, "\n");
+			}
+
+			this.tengDebug.innerHTML = str;
+			${#CONSOLE_TENG_DEBUG == 1 ? 'console.log(str);':''}
+		};
+
+		/* Skrývátko */
+		TengDebugHider = function(a) {
+			this.tengDebug = document.getElementById("teng-wrap");
+			this.link = (document.getElementById(a));
+			if (localStorage.tengFixedShow == 1) {
+				this.show();
+			} else {
+				this.hide();
+			}
+			this.link.addEventListener("click", this.scroll.bind(this), false);
+		};
+
+		TengDebugHider.prototype.scroll = function() {
+			if (localStorage.tengFixedShow == 1) {
+				this.hide();
+				localStorage.tengFixedShow = 0;
+			} else {
+				this.show();
+				localStorage.tengFixedShow = 1;
+			}
+
+			return false;
+		};
+
+		TengDebugHider.prototype.hide = function() {
+			this.tengDebug.style.display = "none";
+			document.getElementsByTagName("body")[0].style.paddingBottom = 40 + "px";
+			this.link.innerHTML = "Zobrazit";
+		};
+
+		TengDebugHider.prototype.show = function() {
+			this.tengDebug.style.display = "block";
+			document.getElementsByTagName("body")[0].style.paddingBottom = (#{TENG_FIXED_DEBUG_HEIGHT} + 40) + "px";
+			this.link.innerHTML = "Skrýt";
+		};
+
+		/* Mění velikost debuggeru */
+		TengDebugResizer = function() {
+			this.container = document.getElementById("teng-debug");
+			this.title = document.getElementById("teng-debug-title");
+			this.wrap = document.getElementById("teng-wrap");
+			this.controler = document.getElementById("teng-debug-resizer");
+			this.controler.addEventListener("mousedown", this.mousedown.bind(this), false);
+			this.controler.addEventListener("touchstart", this.touchstart.bind(this), false);
+
+			if (localStorage.tengFixedHeight) {
+				this.wrap.style.height = localStorage.tengFixedHeight + "px";
+			}
+		};
+
+		TengDebugResizer.prototype.mousedown = function() {
+			this.startOfResize();
+			document.body.addEventListener("mousemove", this.resize.bind(this), false);
+			document.body.addEventListener("mouseup", this.stopOfResize.bind(this), false);
+		};
+
+		TengDebugResizer.prototype.touchstart = function() {
+			this.startOfResize();
+			document.body.addEventListener("touchmove", this.resize.bind(this), false);
+			document.body.addEventListener("touchend", this.stopOfResize.bind(this), false);
+		};
+
+		TengDebugResizer.prototype.resize = function(e) {
+			if (!this.stopped) {
+				e.preventDefault();
+				var posY = (e.clientY + 20);
+				if ("ontouchend" in window) {
+					posY = e.touches[0].clientY;
+				}
+
+				var height = window.innerHeight - posY;
+				this.wrap.style.height = height + "px";
+				localStorage.tengFixedHeight = height;
+			}
+		};
+
+		TengDebugResizer.prototype.startOfResize = function() {
+			this.stopped = 0;
+			this.container.style.background = "#FFF";
+			this.title.style.color = "#000";
+		};
+
+		TengDebugResizer.prototype.stopOfResize = function(e) {
+			this.stopped = 1;
+			this.container.style.background = "#000";
+			this.title.style.color = "#FFF";
+		};
+	</script>
+
+	<?teng format space='noformat'?>
+		<div id="teng-debug">
+			<div id="teng-debug-resizer"></div>
+
+			<?teng if #SUPER_TENG_DESIGN == 1?>
+				<h2 id="teng-debug-title">Teng debug</h2>
+				<?teng if #TENG_FIXED_DEBUG == 1?>
+					<ul class="teng-debug-control-panel">
+						<li><a id="teng-debug-hider" href="javascript:">Skrýt</a></li>
+					</ul>
+				<?teng endif?>
+				<div class="clear"></div>
+			<?teng endif?>
+
+			<div id="teng-wrap">
+				<!--- Errors --->
+				<?teng if isenabled('errorfragment')?>
+					<pre id="teng-debug-errors">
+						<?teng format space='nowhitelines'?>
+							<?teng frag ._error?>
+								${filename} Line:${line} Col:${column} ${message}
+							<?teng endfrag?>
+						<?teng endformat?>
+					</pre>
+
+					<?teng if #CONSOLE_TENG_ERRORS == 1?>
+						<script type="text/javascript">
+							console.log((document.getElementsById("teng-debug-errors")).innerHTML);
+						</script>
+					<?teng endif?>
+				<?teng endif?>
+
+				<!--- Debug --->
+				<?teng if isenabled('debug')?>
+					<pre class="debugOutput">
+						<?teng frag .debug ?>
+							${line}
+						<?teng endfrag ?>
+					</pre>
+				<?teng endif?>
+
+				<!--- Debug --->
+				<?teng if isenabled('debug')?>
+					<pre id="teng-debug-content">
+						<?teng debug?>
+					</pre>
+
+					<script type="text/javascript">
+						new TengDebugCleaner("teng-debug-content");
+					</script>
+				<?teng endif?>
+			</div>
+		</div>
+
+		<?teng if #TENG_FIXED_DEBUG == 1?>
+			<script type="text/javascript">
+				new TengDebugHider("teng-debug-hider");
+				new TengDebugResizer();
+			</script>
+		<?teng endif?>
+	<?teng endformat?>
+<?teng endif?>

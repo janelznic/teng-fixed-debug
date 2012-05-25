@@ -1,0 +1,30 @@
+##############################
+# SUPER TENG DEBUG CHANGELOG #
+##############################
+
+* Version 1.2.1 (25.05.2012)
+  * Drobná úprava v grafice
+
+* Version 1.2.1 (14.05.2012)
+  * Opravena chyba se změnou velikosti po odscrollování stránky
+  * Opravena chyba s výpisem do console
+
+* Version 1.2 (23.04.2012)
+  * Přidána podpora pro dotyková zařízení (testováno na iPadu)
+
+* Version 1.1.1 (16.04.2012)
+  * Zabrání označení měniče velikosti Fixed debugu a tím špatné plynulé změně velikosti
+
+* Version 1.1 (16.04.2012)
+  * Umí měnit velikost tažením kurzoru myši za horní okraj a pamatuje si ji v localStorage
+
+* Version 1.0 (06.04.2012)
+  * Zvýrazní Teng Debug do kontrastních barev
+  * Zamezí, aby se okno prohlížeče natahovalo kvůli debugu do větší než klasické šířky (overflow:hidden;)
+  * Očeše javascriptem bordel uvnitř (zbytečné dlouhé vertikální mezery, prázdné řádky atd.)
+  * Umí se přilepit ke spodní hraně okna prohlížeče a posouvat se zároveň se stránkou (position:fixed;)
+  * Pamatuje si v localstorage stav zasunutí / vysunutí
+  * Při měkkém refreshi stránky se nemění pozice okna prohlížeče ani v debugu (nescrolluje na začátek)
+  * Nepotřebuje JAK, je samostatně funkční
+  * Je psaný OOP, vlastní jmenný prostor
+  * Kompatibilní s  Firetengem 
