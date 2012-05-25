@@ -1,0 +1,14 @@
+Fixed Teng Debug
+* Maintainer: <jan.elznic@firma.seznam.cz>
+
+What can it do?
+* Highlight teng debug consoles in contrasting colors
+* Clean up the output from white spaces by javascript (long vertical spaces, blank lines, etc.)
+* Can stick to the bottom edge of the browser window and scroll the page while (position: fixed;)
+* Remembers the state localstorage insertion / ejection
+* When soft refresh the page does not change the vertical position of debug console
+* Change the size by dragging the mouse cursor vertically
+* JAK framework is not required
+* Own javascript namespace
+* Supports touch devices (tested on iPad)
+* Compatible with Fireteng
