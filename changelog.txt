@@ -2,7 +2,10 @@
 # SUPER TENG DEBUG CHANGELOG #
 ##############################
 
-* Version 1.2.1 (25.05.2012)
+* Version 1.2.3 (25.05.2012)
+  * Proměnná do konfigurace nahrazující developMode
+
+* Version 1.2.2 (25.05.2012)
   * Drobná úprava v grafice
 
 * Version 1.2.1 (14.05.2012)
